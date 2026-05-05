@@ -1,0 +1,330 @@
+---
+import {
+    Menu,
+    X,
+    Phone,
+    Sun,
+    Moon,
+    Languages,
+    ChevronDown,
+    Sparkles,
+} from "@lucide/astro";
+
+import { siteConfig, type Lang } from "../data/site";
+import {
+    mainNavigation,
+    mobileNavigationLabels,
+    utilityNavigation,
+} from "../data/navigation";
+import {
+    getLangFromUrl,
+    getLocalizedHref,
+    getCurrentNavState,
+    getAlternatePath,
+} from "../utils/i18n";
+
+const lang: Lang = getLangFromUrl(Astro.url.pathname);
+const currentPath = Astro.url.pathname;
+
+const leftNavItems = mainNavigation.slice(0, 3);
+const rightNavItems = mainNavigation.slice(3);
+
+const mobileLabels = mobileNavigationLabels[lang];
+const themeLabels = utilityNavigation.theme[lang];
+
+const alternatePath = getAlternatePath(currentPath, lang);
+const alternateLang = lang === "en" ? "es" : "en";
+
+const logoSrc = siteConfig.assets.logo;
+const logoAlt =
+    lang === "es"
+        ? "Logo de Next Horizon Therapy"
+        : "Next Horizon Therapy logo";
+---
+
+<header
+    class="fixed inset-x-0 top-0 z-50 px-3 pt-3 md:px-5"
+    data-header
+>
+    <div
+        class="mx-auto max-w-[1280px] rounded-[2rem] border border-[rgb(var(--color-border)/0.55)] bg-[rgb(var(--color-surface)/0.72)] px-4 py-3 shadow-[0_18px_55px_rgb(18_35_48/0.10)] backdrop-blur-2xl transition-all duration-300 dark:shadow-[0_18px_55px_rgb(0_0_0/0.28)] lg:px-5"
+    >
+        <div class="relative flex min-h-16 items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-5">
+        <!-- Desktop Left Nav -->
+        <nav
+            class="hidden items-center justify-end gap-1 lg:flex"
+            aria-label={lang === "es" ? "Navegación principal izquierda" : "Primary left navigation"}
+        >
+            {
+            leftNavItems.map((item) => {
+                const href = getLocalizedHref(item.href, lang);
+                const isActive = getCurrentNavState(currentPath, href);
+                const hasChildren = item.children && item.children.length > 0;
+
+                return (
+                <div class="group relative">
+                    <a
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    class="group/nav inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-black text-[rgb(var(--color-text-soft))] transition duration-200 hover:bg-[rgb(var(--color-blue)/0.08)] hover:text-[rgb(var(--color-heading))]"
+                    >
+                    {item.label[lang]}
+                    {hasChildren && (
+                        <ChevronDown
+                        class="size-3.5 transition duration-200 group-hover:rotate-180"
+                        aria-hidden="true"
+                        />
+                    )}
+                    </a>
+
+                    {
+                    hasChildren && (
+                        <div class="pointer-events-none absolute left-1/2 top-full z-50 mt-4 w-[440px] -translate-x-1/2 translate-y-2 rounded-[1.75rem] border border-[rgb(var(--color-border)/0.65)] bg-[rgb(var(--color-surface)/0.92)] p-3 opacity-0 shadow-[0_24px_70px_rgb(18_35_48/0.16)] backdrop-blur-2xl transition duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 dark:shadow-[0_24px_70px_rgb(0_0_0/0.38)]">
+                        <div class="absolute -top-2 left-1/2 size-4 -translate-x-1/2 rotate-45 border-l border-t border-[rgb(var(--color-border)/0.65)] bg-[rgb(var(--color-surface)/0.92)]" />
+
+                        <div class="relative grid gap-2">
+                            {item.children?.map((child, index) => (
+                            <a
+                                href={getLocalizedHref(child.href, lang)}
+                                class="group/item grid grid-cols-[auto_1fr] gap-3 rounded-[1.25rem] p-3 transition duration-200 hover:bg-[rgb(var(--color-blue)/0.08)]"
+                            >
+                                <span
+                                class:list={[
+                                    "mt-1 grid size-9 place-items-center rounded-2xl text-white shadow-sm",
+                                    index % 3 === 0 && "bg-[rgb(var(--color-saffron))]",
+                                    index % 3 === 1 && "bg-[rgb(var(--color-blue))]",
+                                    index % 3 === 2 && "bg-[rgb(var(--color-mint))]",
+                                ]}
+                                >
+                                <Sparkles class="size-4" aria-hidden="true" />
+                                </span>
+
+                                <span>
+                                <span class="block font-heading text-sm font-black text-[rgb(var(--color-heading))]">
+                                    {child.label[lang]}
+                                </span>
+                                {child.description && (
+                                    <span class="mt-1 block text-sm leading-6 text-[rgb(var(--color-text-soft))]">
+                                    {child.description[lang]}
+                                    </span>
+                                )}
+                                </span>
+                            </a>
+                            ))}
+                        </div>
+                        </div>
+                    )
+                    }
+                </div>
+                );
+            })
+            }
+        </nav>
+
+        <!-- Center Logo -->
+        <a
+            href={lang === "es" ? "/es" : "/"}
+            class="group relative z-10 flex items-center justify-center"
+            aria-label={lang === "es" ? "Ir al inicio" : "Go to homepage"}
+        >
+            <span
+            class="absolute -inset-3 rounded-full bg-[radial-gradient(circle,rgb(var(--color-saffron)/0.22),transparent_65%)] opacity-80 blur-md transition duration-300 group-hover:scale-110 group-hover:opacity-100"
+            aria-hidden="true"
+            />
+            <span class="relative grid size-16 place-items-center rounded-full border border-[rgb(var(--color-border)/0.65)] bg-white/85 p-2 shadow-[0_14px_35px_rgb(18_35_48/0.12)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_45px_rgb(255_147_29/0.24)] dark:bg-[rgb(var(--color-surface)/0.9)]">
+            <img
+                src={logoSrc}
+                alt={logoAlt}
+                class="h-full w-full rounded-full object-contain"
+                width="64"
+                height="64"
+            />
+            </span>
+        </a>
+
+        <!-- Desktop Right Nav -->
+        <div class="hidden items-center justify-start gap-2 lg:flex">
+            <nav
+            class="flex items-center gap-1"
+            aria-label={lang === "es" ? "Navegación principal derecha" : "Primary right navigation"}
+            >
+            {
+                rightNavItems.map((item) => {
+                const href = getLocalizedHref(item.href, lang);
+                const isActive = getCurrentNavState(currentPath, href);
+
+                return (
+                    <a
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    class="inline-flex items-center rounded-full px-3.5 py-2 text-sm font-black text-[rgb(var(--color-text-soft))] transition duration-200 hover:bg-[rgb(var(--color-mint)/0.09)] hover:text-[rgb(var(--color-heading))]"
+                    >
+                    {item.label[lang]}
+                    </a>
+                );
+                })
+            }
+            </nav>
+
+            <div class="ml-2 flex items-center gap-2">
+            <a
+                href={alternatePath}
+                class="control-button px-3 text-xs font-black uppercase tracking-[0.14em]"
+                aria-label={utilityNavigation.language[lang].ariaLabel}
+            >
+                <Languages class="size-4" aria-hidden="true" />
+                {alternateLang}
+            </a>
+
+            <button
+                type="button"
+                class="control-button"
+                aria-label={themeLabels.toggle}
+                data-theme-toggle
+            >
+                <Sun class="size-4 dark:hidden" aria-hidden="true" />
+                <Moon class="hidden size-4 dark:block" aria-hidden="true" />
+            </button>
+
+            <a href={siteConfig.phone.href} class="btn btn-primary !min-h-11 !px-4">
+                <Phone class="size-4" aria-hidden="true" />
+                <span>{siteConfig.phone.display}</span>
+            </a>
+            </div>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div class="flex items-center gap-2 lg:hidden">
+            <a
+            href={siteConfig.phone.href}
+            class="control-button"
+            aria-label={lang === "es" ? "Llamar ahora" : "Call now"}
+            >
+            <Phone class="size-4" aria-hidden="true" />
+            </a>
+
+            <button
+            type="button"
+            class="control-button"
+            aria-label={themeLabels.toggle}
+            data-theme-toggle
+            >
+            <Sun class="size-4 dark:hidden" aria-hidden="true" />
+            <Moon class="hidden size-4 dark:block" aria-hidden="true" />
+            </button>
+
+            <button
+            type="button"
+            class="control-button"
+            aria-label={mobileLabels.openMenu}
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            data-mobile-menu-button
+            >
+            <Menu class="size-5" data-menu-icon aria-hidden="true" />
+            <X class="hidden size-5" data-close-icon aria-hidden="true" />
+            </button>
+        </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div
+        id="mobile-menu"
+        class="grid max-h-0 overflow-hidden transition-[max-height] duration-300 ease-in-out lg:hidden"
+        data-mobile-menu
+        >
+        <div class="pt-4">
+            <div class="rounded-[1.5rem] border border-[rgb(var(--color-border)/0.6)] bg-[rgb(var(--color-surface-soft)/0.72)] p-3">
+            <div class="grid gap-1">
+                {
+                mainNavigation.map((item) => {
+                    const href = getLocalizedHref(item.href, lang);
+                    const isActive = getCurrentNavState(currentPath, href);
+
+                    return (
+                    <a
+                        href={href}
+                        aria-current={isActive ? "page" : undefined}
+                        class="rounded-2xl px-4 py-3 font-heading text-sm font-black text-[rgb(var(--color-heading))] transition hover:bg-[rgb(var(--color-blue)/0.08)]"
+                    >
+                        {item.label[lang]}
+                    </a>
+                    );
+                })
+                }
+            </div>
+
+            <div class="mt-3 grid grid-cols-2 gap-2">
+                <a href={alternatePath} class="btn btn-secondary !min-h-11">
+                <Languages class="size-4" aria-hidden="true" />
+                {utilityNavigation.language[lang].label}
+                </a>
+
+                <a href={siteConfig.cta.primary.href[lang]} class="btn btn-primary !min-h-11">
+                {siteConfig.cta.primary[lang]}
+                </a>
+            </div>
+
+            <p class="mt-3 rounded-2xl bg-[rgb(var(--color-mint)/0.1)] px-4 py-3 text-center text-sm font-bold text-[rgb(var(--color-text-soft))]">
+                {lang === "es"
+                ? "Terapia ABA en Miami y el sur de la Florida."
+                : "ABA therapy in Miami and South Florida."}
+            </p>
+            </div>
+        </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    const header = document.querySelector("[data-header]");
+    const menuButton = document.querySelector("[data-mobile-menu-button]");
+    const mobileMenu = document.querySelector("[data-mobile-menu]");
+    const menuIcon = document.querySelector("[data-menu-icon]");
+    const closeIcon = document.querySelector("[data-close-icon]");
+    const themeButtons = document.querySelectorAll("[data-theme-toggle]");
+
+    const closeMobileMenu = () => {
+        if (!menuButton || !mobileMenu || !menuIcon || !closeIcon) return;
+
+        menuButton.setAttribute("aria-expanded", "false");
+        mobileMenu.classList.remove("max-h-[620px]");
+        mobileMenu.classList.add("max-h-0");
+        menuIcon.classList.remove("hidden");
+        closeIcon.classList.add("hidden");
+    };
+
+    menuButton?.addEventListener("click", () => {
+        if (!mobileMenu || !menuIcon || !closeIcon) return;
+
+        const isOpen = menuButton.getAttribute("aria-expanded") === "true";
+
+        menuButton.setAttribute("aria-expanded", String(!isOpen));
+        mobileMenu.classList.toggle("max-h-0", isOpen);
+        mobileMenu.classList.toggle("max-h-[620px]", !isOpen);
+        menuIcon.classList.toggle("hidden", !isOpen);
+        closeIcon.classList.toggle("hidden", isOpen);
+    });
+
+    themeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+        window.nextHorizonTheme?.toggle();
+        });
+    });
+
+    window.addEventListener("scroll", () => {
+        if (!header) return;
+
+        if (window.scrollY > 12) {
+        header.classList.add("pt-2");
+        header.classList.remove("pt-3");
+        } else {
+        header.classList.add("pt-3");
+        header.classList.remove("pt-2");
+        }
+    });
+
+    window.addEventListener("resize", () => {
+        if (window.innerWidth >= 1024) closeMobileMenu();
+    });
+</script>

@@ -1,0 +1,265 @@
+---
+import {
+    Phone,
+    Mail,
+    MapPin,
+    HeartHandshake,
+    ShieldCheck,
+    Languages,
+    ArrowRight,
+    Sparkles,
+    Sun,
+} from "@lucide/astro";
+
+import { siteConfig, type Lang } from "../data/site";
+import { footerNavigation } from "../data/navigation";
+import { getLangFromUrl, getLocalizedHref } from "../utils/i18n";
+
+const lang: Lang = getLangFromUrl(Astro.url.pathname);
+const year = new Date().getFullYear();
+
+const logoSrc = siteConfig.assets.logo;
+const logoAlt =
+    lang === "es"
+        ? "Logo de Next Horizon Therapy"
+        : "Next Horizon Therapy logo";
+
+const footerGroups = [
+    footerNavigation.services,
+    footerNavigation.company,
+    footerNavigation.serviceAreas,
+    footerNavigation.legal,
+];
+
+const trustItems = {
+    en: [
+        "Medicaid & private insurance",
+        "English & Spanish support",
+        "Miami & South Florida",
+    ],
+    es: [
+        "Medicaid y seguros privados",
+        "Apoyo en inglés y español",
+        "Miami y el sur de la Florida",
+    ],
+};
+---
+
+<footer class="relative overflow-hidden border-t border-[rgb(var(--color-border)/0.55)] bg-[rgb(var(--color-bg-soft))]">
+    <!-- Decorative Background -->
+    <div class="pointer-events-none absolute inset-0">
+        <div class="absolute -left-32 top-10 size-80 rounded-full bg-[rgb(var(--color-saffron)/0.13)] blur-3xl" />
+        <div class="absolute right-0 top-24 size-96 rounded-full bg-[rgb(var(--color-blue)/0.11)] blur-3xl" />
+        <div class="absolute bottom-0 left-1/2 size-96 -translate-x-1/2 rounded-full bg-[rgb(var(--color-mint)/0.1)] blur-3xl" />
+        <div class="absolute inset-0 bg-care-grid opacity-35" />
+    </div>
+
+    <div class="container-shell relative">
+        <!-- Footer CTA -->
+        <div class="section-shell-sm pb-8">
+        <div class="glow-panel px-6 py-8 md:px-10 md:py-10">
+            <div class="relative grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+            <div>
+                <p class="section-kicker">
+                <HeartHandshake class="size-4" aria-hidden="true" />
+                {lang === "es" ? "Estamos aquí para ayudar" : "We’re here to help"}
+                </p>
+
+                <h2 class="mt-5 max-w-3xl">
+                {lang === "es"
+                    ? "Comience el camino hacia el próximo horizonte de su hijo."
+                    : "Start the path toward your child’s next horizon."}
+                </h2>
+
+                <p class="lead mt-5 max-w-2xl">
+                {lang === "es"
+                    ? "Nuestro equipo puede ayudarle a entender los servicios, verificar el seguro y comenzar el proceso de admisión para terapia ABA en Miami y el sur de la Florida."
+                    : "Our team can help you understand services, verify insurance, and begin the intake process for ABA therapy in Miami and South Florida."}
+                </p>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                <a href={siteConfig.cta.primary.href[lang]} class="btn btn-primary">
+                {siteConfig.cta.primary[lang]}
+                <ArrowRight class="size-4" aria-hidden="true" />
+                </a>
+
+                <a href={siteConfig.phone.href} class="btn btn-secondary">
+                <Phone class="size-4" aria-hidden="true" />
+                {siteConfig.phone.display}
+                </a>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Main Footer -->
+        <div class="grid gap-10 border-t border-[rgb(var(--color-border)/0.6)] py-10 lg:grid-cols-[1.15fr_1.85fr]">
+        <!-- Brand Column -->
+        <div>
+            <a
+            href={lang === "es" ? "/es" : "/"}
+            class="group inline-flex items-center gap-4"
+            aria-label={lang === "es" ? "Ir al inicio" : "Go to homepage"}
+            >
+            <span class="relative grid size-16 place-items-center rounded-full border border-[rgb(var(--color-border)/0.65)] bg-white/85 p-2 shadow-[0_14px_35px_rgb(18_35_48/0.10)] transition duration-300 group-hover:-translate-y-1 dark:bg-[rgb(var(--color-surface)/0.9)]">
+                <span class="absolute -inset-2 rounded-full bg-[rgb(var(--color-saffron)/0.12)] blur-md" />
+                <img
+                src={logoSrc}
+                alt={logoAlt}
+                class="relative h-full w-full rounded-full object-contain"
+                width="64"
+                height="64"
+                />
+            </span>
+
+            <span>
+                <span class="block font-heading text-xl font-black leading-tight text-[rgb(var(--color-heading))]">
+                {siteConfig.name}
+                </span>
+                <span class="mt-1 block text-sm font-bold text-[rgb(var(--color-text-soft))]">
+                {siteConfig.tagline[lang]}
+                </span>
+            </span>
+            </a>
+
+            <p class="mt-6 max-w-md leading-7 text-[rgb(var(--color-text-soft))]">
+            {siteConfig.description[lang]}
+            </p>
+
+            <div class="mt-6 grid gap-3">
+            <a
+                href={siteConfig.phone.href}
+                class="group flex items-center gap-3 rounded-2xl border border-[rgb(var(--color-border)/0.6)] bg-[rgb(var(--color-surface)/0.55)] p-3 transition hover:border-[rgb(var(--color-saffron)/0.45)] hover:bg-[rgb(var(--color-saffron)/0.08)]"
+            >
+                <span class="icon-bubble">
+                <Phone class="size-4" aria-hidden="true" />
+                </span>
+                <span>
+                <span class="block text-xs font-black uppercase tracking-[0.14em] text-[rgb(var(--color-text-soft))]">
+                    {lang === "es" ? "Teléfono" : "Phone"}
+                </span>
+                <span class="block font-heading font-black text-[rgb(var(--color-heading))]">
+                    {siteConfig.phone.display}
+                </span>
+                </span>
+            </a>
+
+            <a
+                href={siteConfig.email.href}
+                class="group flex items-center gap-3 rounded-2xl border border-[rgb(var(--color-border)/0.6)] bg-[rgb(var(--color-surface)/0.55)] p-3 transition hover:border-[rgb(var(--color-blue)/0.45)] hover:bg-[rgb(var(--color-blue)/0.08)]"
+            >
+                <span class="icon-bubble icon-bubble-blue">
+                <Mail class="size-4" aria-hidden="true" />
+                </span>
+                <span>
+                <span class="block text-xs font-black uppercase tracking-[0.14em] text-[rgb(var(--color-text-soft))]">
+                    {lang === "es" ? "Correo" : "Email"}
+                </span>
+                <span class="block break-all font-heading font-black text-[rgb(var(--color-heading))]">
+                    {siteConfig.email.display}
+                </span>
+                </span>
+            </a>
+
+            <div class="flex items-center gap-3 rounded-2xl border border-[rgb(var(--color-border)/0.6)] bg-[rgb(var(--color-surface)/0.55)] p-3">
+                <span class="icon-bubble icon-bubble-mint">
+                <MapPin class="size-4" aria-hidden="true" />
+                </span>
+                <span>
+                <span class="block text-xs font-black uppercase tracking-[0.14em] text-[rgb(var(--color-text-soft))]">
+                    {lang === "es" ? "Área de servicio" : "Service Area"}
+                </span>
+                <span class="block font-heading font-black text-[rgb(var(--color-heading))]">
+                    {siteConfig.location.display[lang]} · {siteConfig.location.region}
+                </span>
+                </span>
+            </div>
+            </div>
+        </div>
+
+        <!-- Navigation Columns -->
+        <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            {
+            footerGroups.map((group, groupIndex) => (
+                <div class="rounded-[1.5rem] border border-[rgb(var(--color-border)/0.55)] bg-[rgb(var(--color-surface)/0.48)] p-5">
+                <div class="flex items-center gap-2">
+                    <span
+                    class:list={[
+                        "grid size-8 place-items-center rounded-xl text-white",
+                        groupIndex === 0 && "bg-[rgb(var(--color-saffron))]",
+                        groupIndex === 1 && "bg-[rgb(var(--color-blue))]",
+                        groupIndex === 2 && "bg-[rgb(var(--color-mint))]",
+                        groupIndex === 3 && "horizon-gradient",
+                    ]}
+                    >
+                    {groupIndex === 0 && <Sparkles class="size-4" aria-hidden="true" />}
+                    {groupIndex === 1 && <HeartHandshake class="size-4" aria-hidden="true" />}
+                    {groupIndex === 2 && <MapPin class="size-4" aria-hidden="true" />}
+                    {groupIndex === 3 && <ShieldCheck class="size-4" aria-hidden="true" />}
+                    </span>
+
+                    <h3 class="text-base">
+                    {group.title[lang]}
+                    </h3>
+                </div>
+
+                <ul class="mt-4 grid gap-2">
+                    {group.links.map((link) => (
+                    <li>
+                        <a
+                        href={getLocalizedHref(link.href, lang)}
+                        class="group inline-flex items-center gap-2 text-sm font-bold leading-6 text-[rgb(var(--color-text-soft))] transition hover:text-[rgb(var(--color-heading))]"
+                        >
+                        <span class="size-1.5 rounded-full bg-[rgb(var(--color-saffron)/0.55)] transition group-hover:bg-[rgb(var(--color-saffron))]" />
+                        {link.label[lang]}
+                        </a>
+                    </li>
+                    ))}
+                </ul>
+                </div>
+            ))
+            }
+        </div>
+        </div>
+
+        <!-- Trust Bar -->
+        <div class="grid gap-3 border-t border-[rgb(var(--color-border)/0.6)] py-6 md:grid-cols-3">
+        {
+            trustItems[lang].map((item, index) => (
+            <div class="flex items-center gap-3 rounded-2xl bg-[rgb(var(--color-surface)/0.46)] px-4 py-3">
+                <span
+                class:list={[
+                    "grid size-9 place-items-center rounded-xl text-white",
+                    index === 0 && "bg-[rgb(var(--color-saffron))]",
+                    index === 1 && "bg-[rgb(var(--color-blue))]",
+                    index === 2 && "bg-[rgb(var(--color-mint))]",
+                ]}
+                >
+                {index === 0 && <ShieldCheck class="size-4" aria-hidden="true" />}
+                {index === 1 && <Languages class="size-4" aria-hidden="true" />}
+                {index === 2 && <Sun class="size-4" aria-hidden="true" />}
+                </span>
+
+                <span class="font-heading text-sm font-black text-[rgb(var(--color-heading))]">
+                {item}
+                </span>
+            </div>
+            ))
+        }
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="flex flex-col gap-3 border-t border-[rgb(var(--color-border)/0.6)] py-6 text-sm font-bold text-[rgb(var(--color-text-soft))] md:flex-row md:items-center md:justify-between">
+        <p>
+            © {year} {siteConfig.name}. {lang === "es" ? "Todos los derechos reservados." : "All rights reserved."}
+        </p>
+
+        <p>
+            {lang === "es"
+            ? "Terapia ABA compasiva para familias en Miami y el sur de la Florida."
+            : "Compassionate ABA therapy for families in Miami and South Florida."}
+        </p>
+        </div>
+    </div>
+</footer>

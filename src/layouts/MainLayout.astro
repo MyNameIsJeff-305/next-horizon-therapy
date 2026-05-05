@@ -1,0 +1,259 @@
+---
+import "../styles/global.css";
+
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+type Lang = "en" | "es";
+
+type Props = {
+    title?: string;
+    description?: string;
+    lang?: Lang;
+    canonicalPath?: string;
+    image?: string;
+    noindex?: boolean;
+    bodyClass?: string;
+    alternateEn?: string;
+    alternateEs?: string;
+    schema?: Record<string, unknown> | Record<string, unknown>[];
+};
+
+const {
+    title = "ABA Therapy in Miami & South Florida | Next Horizon Therapy",
+    description = "Next Horizon Therapy provides compassionate, evidence-based ABA therapy in Miami and South Florida for children with autism, developmental delays, behavioral challenges, and special needs.",
+    lang = "en",
+    canonicalPath,
+    image = "/images/og/next-horizon-og.webp",
+    noindex = false,
+    bodyClass = "",
+    alternateEn,
+    alternateEs,
+    schema,
+} = Astro.props;
+
+const siteName = "Next Horizon Therapy";
+const siteUrl = "https://nexthorizontherapy.com";
+
+const currentPath = canonicalPath ?? Astro.url.pathname;
+const canonicalUrl = new URL(currentPath, siteUrl).toString();
+
+const ogImageUrl = image.startsWith("http")
+    ? image
+    : new URL(image, siteUrl).toString();
+
+const isSpanish = lang === "es";
+
+const defaultAlternateEn =
+    alternateEn ?? (isSpanish ? Astro.url.pathname.replace(/^\/es/, "") || "/" : Astro.url.pathname);
+
+const defaultAlternateEs =
+    alternateEs ?? (isSpanish ? Astro.url.pathname : `/es${Astro.url.pathname === "/" ? "" : Astro.url.pathname}`);
+
+const alternateEnUrl = new URL(defaultAlternateEn, siteUrl).toString();
+const alternateEsUrl = new URL(defaultAlternateEs, siteUrl).toString();
+
+const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": ["LocalBusiness", "MedicalBusiness"],
+    "@id": `${siteUrl}/#organization`,
+    name: siteName,
+    url: siteUrl,
+    telephone: "+1-305-954-1866",
+    image: new URL("/images/logo/next-horizon-logo.webp", siteUrl).toString(),
+    logo: new URL("/images/logo/next-horizon-logo.webp", siteUrl).toString(),
+    description:
+        "Next Horizon Therapy provides ABA therapy services for children and families in Miami and South Florida.",
+    address: {
+        "@type": "PostalAddress",
+        addressLocality: "Miami",
+        addressRegion: "FL",
+        addressCountry: "US",
+    },
+    areaServed: [
+        {
+        "@type": "City",
+        name: "Miami",
+        },
+        {
+        "@type": "AdministrativeArea",
+        name: "South Florida",
+        },
+    ],
+    availableLanguage: ["English", "Spanish"],
+    medicalSpecialty: [
+        "Applied Behavior Analysis",
+        "Autism Therapy",
+        "Behavioral Therapy",
+        "Child Development Support",
+    ],
+    priceRange: "$$",
+    contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+1-305-954-1866",
+        contactType: "customer service",
+        areaServed: "US-FL",
+        availableLanguage: ["English", "Spanish"],
+    },
+};
+
+const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    name: siteName,
+    url: siteUrl,
+    inLanguage: ["en-US", "es-US"],
+    publisher: {
+        "@id": `${siteUrl}/#organization`,
+    },
+};
+
+const pageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${canonicalUrl}#webpage`,
+    url: canonicalUrl,
+    name: title,
+    description,
+    isPartOf: {
+        "@id": `${siteUrl}/#website`,
+    },
+    about: {
+        "@id": `${siteUrl}/#organization`,
+    },
+    inLanguage: isSpanish ? "es-US" : "en-US",
+};
+
+const finalSchema = Array.isArray(schema)
+    ? [organizationSchema, websiteSchema, pageSchema, ...schema]
+    : schema
+    ? [organizationSchema, websiteSchema, pageSchema, schema]
+    : [organizationSchema, websiteSchema, pageSchema];
+---
+
+<!doctype html>
+<html lang={isSpanish ? "es-US" : "en-US"} dir="ltr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Prevent dark mode flash before page paint -->
+        <script is:inline>
+        (() => {
+            const storageKey = "next-horizon-theme";
+
+            try {
+            const savedTheme = localStorage.getItem(storageKey);
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+            if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add("dark");
+            } else {
+                document.documentElement.classList.remove("dark");
+            }
+            } catch (_) {}
+        })();
+        </script>
+
+        <!-- Basic SEO -->
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+        <link rel="canonical" href={canonicalUrl} />
+
+        <!-- Language alternates -->
+        <link rel="alternate" hreflang="en-US" href={alternateEnUrl} />
+        <link rel="alternate" hreflang="es-US" href={alternateEsUrl} />
+        <link rel="alternate" hreflang="x-default" href={alternateEnUrl} />
+
+        <!-- Theme colors -->
+        <meta name="theme-color" content="#ff931d" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#07121a" media="(prefers-color-scheme: dark)" />
+
+        <!-- Favicons -->
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        <!-- Open Graph -->
+        <meta property="og:site_name" content={siteName} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content={isSpanish ? "es_US" : "en_US"} />
+        <meta property="og:locale:alternate" content={isSpanish ? "en_US" : "es_US"} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:alt" content="Next Horizon Therapy ABA Therapy in Miami and South Florida" />
+
+        <!-- Twitter / X -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImageUrl} />
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Poppins:wght@500;600;700;800;900&display=swap"
+        rel="stylesheet"
+        />
+
+        <!-- Structured Data -->
+        <script type="application/ld+json" set:html={JSON.stringify(finalSchema)} />
+
+        <slot name="head" />
+    </head>
+
+    <body class={`page-shell ${bodyClass}`}>
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:rounded-full focus:bg-[rgb(var(--color-saffron))] focus:px-5 focus:py-3 focus:font-bold focus:text-slate-950"
+        >
+        {isSpanish ? "Saltar al contenido principal" : "Skip to main content"}
+        </a>
+
+        <div
+            class="relative min-h-screen overflow-x-clip bg-[rgb(var(--color-bg))]"
+        >
+        <div
+            class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_top_left,rgba(254,205,76,0.20),transparent_35%),radial-gradient(circle_at_top_right,rgba(176,241,34,0.14),transparent_30%),radial-gradient(circle_at_center,rgba(218,60,120,0.10),transparent_45%)]"
+        >
+        </div>
+
+        <Header />
+
+        <main id="main-content" class="relative">
+            <slot />
+        </main>
+
+        <Footer />
+        </div>
+
+        <script is:inline>
+        window.nextHorizonTheme = {
+            storageKey: "next-horizon-theme",
+            toggle() {
+            const root = document.documentElement;
+            const isDark = root.classList.toggle("dark");
+            localStorage.setItem(this.storageKey, isDark ? "dark" : "light");
+            return isDark;
+            },
+            set(theme) {
+            const root = document.documentElement;
+
+            if (theme === "dark") {
+                root.classList.add("dark");
+                localStorage.setItem(this.storageKey, "dark");
+            }
+
+            if (theme === "light") {
+                root.classList.remove("dark");
+                localStorage.setItem(this.storageKey, "light");
+            }
+            },
+        };
+        </script>
+    </body>
+</html>
